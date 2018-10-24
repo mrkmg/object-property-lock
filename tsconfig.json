@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "declaration": true,
+    "sourceMap": true,
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "types" : [
+      "node",
+      "jasmine"
+    ]
+  },
+  "include": [
+    "index.ts",
+    "test/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

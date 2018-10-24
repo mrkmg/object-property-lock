@@ -1,0 +1,41 @@
+{
+  "name": "object-property-lock",
+  "version": "1.0.0",
+  "description": "A small and simple javascript library to lock properties on an object from being reassigned.",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "node ./config/test-runner.js",
+    "coverage": "istanbul cover ./config/test-runner.js",
+    "lint": "tslint --force -c ./config/tslint.json 'src/**/*.ts'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrkmg/object-property-lock.git"
+  },
+  "keywords": [
+    "typescript",
+    "object",
+    "property",
+    "lock"
+  ],
+  "author": "Kevin Gravier <kevin@mrkmg.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mrkmg/object-property-lock/issues"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^2.8.5",
+    "@types/node": "^9.3.0",
+    "istanbul": "^0.4.5",
+    "jasmine": "^2.9.0",
+    "jasmine-console-reporter": "^2.0.1",
+    "tslint": "^5.9.1",
+    "typescript": "^2.6.2"
+  }
+}
