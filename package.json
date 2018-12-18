@@ -30,8 +30,8 @@
     "url": "https://github.com/mrkmg/object-property-lock/issues"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.8.9",
-    "@types/node": "^9.6.35",
+    "@types/jasmine": "^2.8.12",
+    "@types/node": "^9.6.40",
     "istanbul": "^0.4.5",
     "jasmine": "^2.99.0",
     "jasmine-console-reporter": "^2.0.1",
