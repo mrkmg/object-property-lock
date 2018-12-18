@@ -15,6 +15,12 @@ describe("Loud", function () {
         expect(function () { return obj.StringProp = "B"; }).toThrow();
         expect(obj.StringProp).toBe("A");
     });
+    it("should not lock unspecified property", function () {
+        var obj = createTestObject();
+        __1.lock(obj, "StringProp");
+        expect(function () { return obj.NumberProp = 2; }).not.toThrow();
+        expect(obj.NumberProp).toBe(2);
+    });
     it("should lock multiple properties", function () {
         var obj = createTestObject();
         __1.lock(obj, ["StringProp", "NumberProp"]);
@@ -40,6 +46,12 @@ describe("Silent", function () {
         __1.lock(obj, "StringProp", true);
         expect(function () { return obj.StringProp = "B"; }).not.toThrow();
         expect(obj.StringProp).toBe("A");
+    });
+    it("should not lock unspecified property", function () {
+        var obj = createTestObject();
+        __1.lock(obj, "StringProp");
+        expect(function () { return obj.NumberProp = 2; }).not.toThrow();
+        expect(obj.NumberProp).toBe(2);
     });
     it("should lock multiple properties", function () {
         var obj = createTestObject();

@@ -1,24 +1,67 @@
 "use strict";
 exports.__esModule = true;
-function lock(obj, propOrPropsOrThrowError, slient) {
+function Lockable(opts) {
+    return function (target) {
+        return function () {
+            target.call(this, arguments);
+            if (opts && opts.all) {
+                lock(this, opts.silent);
+            }
+            else {
+                if (target.prototype.hasOwnProperty("___silentLock")) {
+                    lock(this, target.prototype.___silentLock, true);
+                }
+                if (target.prototype.hasOwnProperty("___lock")) {
+                    lock(this, target.prototype.___lock, false);
+                }
+                if (opts && opts.properties) {
+                    lock(this, opts.properties, opts.silent);
+                }
+            }
+            return this;
+        };
+    };
+}
+exports.Lockable = Lockable;
+function Lock(opts) {
+    return function (target, propertyKey) {
+        if (opts && opts.silent) {
+            if (!target.hasOwnProperty("___silentLock"))
+                target.___silentLock = [];
+            target.___silentLock.push(propertyKey);
+        }
+        else {
+            if (!target.hasOwnProperty("___lock"))
+                target.___lock = [];
+            target.___lock.push(propertyKey);
+        }
+    };
+}
+exports.Lock = Lock;
+function lock(obj, optsOrPropOrPropsOrThrowError, silent) {
     var props;
-    if (typeof propOrPropsOrThrowError === "undefined") {
+    if (typeof optsOrPropOrPropsOrThrowError === "undefined") {
         props = Object.getOwnPropertyNames(obj);
     }
-    else if (typeof propOrPropsOrThrowError === "boolean") {
-        slient = propOrPropsOrThrowError;
+    else if (typeof optsOrPropOrPropsOrThrowError === "boolean") {
+        silent = optsOrPropOrPropsOrThrowError;
         props = Object.getOwnPropertyNames(obj);
     }
-    else if (!Array.isArray(propOrPropsOrThrowError)) {
-        props = [propOrPropsOrThrowError];
+    else if (Array.isArray(optsOrPropOrPropsOrThrowError)) {
+        props = optsOrPropOrPropsOrThrowError;
+    }
+    else if (typeof optsOrPropOrPropsOrThrowError === "object") {
+        var opts = optsOrPropOrPropsOrThrowError;
+        silent = opts.hasOwnProperty("silent") ? opts.silent : false;
+        props = opts.hasOwnProperty("properties") ? opts.properties : Object.getOwnPropertyNames(obj);
     }
     else {
-        props = propOrPropsOrThrowError;
+        props = [optsOrPropOrPropsOrThrowError];
     }
-    if (typeof slient === "undefined") {
-        slient = false;
+    if (typeof silent === "undefined") {
+        silent = false;
     }
-    if (slient) {
+    if (silent) {
         applySilentLockToProps(obj, props);
     }
     else {

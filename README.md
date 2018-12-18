@@ -15,7 +15,7 @@ const person = {
     id: 3,
     firstName: "Joe",
     lastName: "Dirt"
-}
+};
 
 lock(person, "id");
 
@@ -27,7 +27,7 @@ console.log(person.id); // 3
 Lock multiple properties on an object silently (Do not throw an error on assignment)
 
 ```javascript
-'use strict'
+'use strict';
 import {lock} from "object-lock-property";
 
 const transaction = {
@@ -47,6 +47,42 @@ console.log(transaction.id); // 1000
 console.log(transaction.reference); // ABC123
 ```
 
+Lock a property on a class
+
+```javascript
+'use strict';
+import {Lock, Lockable} from "object-property-lock";
+
+@Lockable()
+class Test {
+    @Lock({silent: true})
+    prop = "A";
+}
+
+const test = new Test();
+test.prop = "B";
+console.log(test.prop); // A
+```
+
+Lock all properties on a class
+
+```javascript
+'use strict';
+import {Lock, Lockable} from "object-property-lock";
+
+@Lockable({all: true})
+class Test {
+    propA = "A";
+    propB = "B";
+}
+
+const test = new Test();
+test.propA = "1"; // Throws error
+test.propB = "2"; // Throws error
+console.log(test.propA); // A
+console.log(test.propB); // A
+```
+
 Below are all possible usages
 
 ```javascript
@@ -62,6 +98,11 @@ lock(obj, ["prop1", "prop2"]); // Locks only the `prop1` and `prop2` properties
 lock(obj, true); // Locks all properties
 lock(obj, "prop", true); // Locks only the `prop` property
 lock(obj, ["prop1", "prop2"], true); // Locks only the `prop1` and `prop2` properties
+
+@Lockable({all: true, properties: ["a"], silent: true})
+class Test {
+    @Lock({silent: true}) prop = "A";
+}
 ```
 
 ## LICENSE
