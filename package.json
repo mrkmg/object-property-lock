@@ -1,11 +1,13 @@
 {
   "name": "object-property-lock",
-  "version": "1.1.0",
+  "version": "2.0.0-beta.1",
   "description": "A small and simple javascript library to lock properties on an object from being reassigned.",
   "main": "index.js",
   "files": [
     "index.js",
-    "index.d.ts"
+    "index.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.d.ts"
   ],
   "scripts": {
     "build": "tsc",

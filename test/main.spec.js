@@ -1,11 +1,16 @@
 "use strict";
-exports.__esModule = true;
+/**
+ * Kevin Gravier <kevin@mrkmg.com>
+ *
+ * MIT License 2018
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
 var __1 = require("../");
 function createTestObject() {
     return {
         StringProp: "A",
         NumberProp: 1,
-        FunctionProp: function () { return "Func"; }
+        FunctionProp: function () { return "Func"; },
     };
 }
 describe("Loud", function () {
@@ -38,6 +43,16 @@ describe("Loud", function () {
         expect(obj.StringProp).toBe("A");
         expect(obj.NumberProp).toBe(1);
         expect(obj.FunctionProp()).toBe("Func");
+    });
+    it("should lock select properties via properties option", function () {
+        var obj = createTestObject();
+        __1.lock(obj, { properties: ["StringProp"] });
+        expect(function () { return obj.StringProp = "A"; }).toThrow();
+        expect(function () { return obj.NumberProp = 2; }).not.toThrow();
+        expect(function () { return obj.FunctionProp = function () { return "Other"; }; }).not.toThrow();
+        expect(obj.StringProp).toBe("A");
+        expect(obj.NumberProp).toBe(2);
+        expect(obj.FunctionProp()).toBe("Other");
     });
 });
 describe("Silent", function () {

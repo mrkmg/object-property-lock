@@ -1,11 +1,10 @@
-import {Lock} from "..";
+import {Locked} from "..";
 import {Lockable} from "../index";
 
 @Lockable()
 class LoudSingleLock {
-    @Lock()
+    @Locked()
     Locked: string = "A";
-
     Unlocked: string = "B";
 }
 
@@ -17,9 +16,8 @@ class LoudAllLocked {
 
 @Lockable()
 class SilentSingleLock {
-    @Lock({silent: true})
+    @Locked({silent: true})
     Locked: string = "A";
-
     Unlocked: string = "B";
 }
 
@@ -27,6 +25,19 @@ class SilentSingleLock {
 class SilentAllLocked {
     Locked1: string = "A";
     Locked2: string = "B";
+}
+
+@Lockable()
+class LoudExtendedLock extends LoudSingleLock {
+    @Locked()
+    Locked2: string = "C";
+    Unlocked2: string = "D";
+}
+
+@Lockable({properties: ["Locked"]})
+class LoudByProperties {
+    Locked: string = "A";
+    Unlocked: string = "B";
 }
 
 describe("Class - Loud", () => {
@@ -46,6 +57,28 @@ describe("Class - Loud", () => {
 
         expect(a.Locked1).toBe("A");
         expect(a.Locked2).toBe("B");
+    });
+
+    it("should lock inheritance chain", () => {
+        const a = new LoudExtendedLock();
+        expect(() => a.Locked = "1").toThrow();
+        expect(() => a.Unlocked = "2").not.toThrow();
+        expect(() => a.Locked2 = "3").toThrow();
+        expect(() => a.Unlocked2 = "4").not.toThrow();
+
+        expect(a.Locked).toBe("A");
+        expect(a.Unlocked).toBe("2");
+        expect(a.Locked2).toBe("C");
+        expect(a.Unlocked2).toBe("4");
+    });
+
+    it("should lock via properties option", () => {
+        const a = new LoudByProperties();
+        expect(() => a.Locked = "1").toThrow();
+        expect(() => a.Unlocked = "2").not.toThrow();
+
+        expect(a.Locked).toBe("A");
+        expect(a.Unlocked).toBe("2");
     });
 });
 

@@ -56,6 +56,20 @@ describe("Loud", () => {
         expect(obj.NumberProp).toBe(1);
         expect(obj.FunctionProp()).toBe("Func");
     });
+
+    it("should lock select properties via properties option", () => {
+        const obj = createTestObject();
+
+        lock(obj, {properties: ["StringProp"]});
+
+        expect(() => obj.StringProp = "A").toThrow();
+        expect(() => obj.NumberProp = 2).not.toThrow();
+        expect(() => obj.FunctionProp = () => "Other").not.toThrow();
+
+        expect(obj.StringProp).toBe("A");
+        expect(obj.NumberProp).toBe(2);
+        expect(obj.FunctionProp()).toBe("Other");
+    });
 });
 
 describe("Silent", () => {

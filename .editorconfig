@@ -1,0 +1,9 @@
+[*.ts]
+max_line_length = 150
+tab_width = 4
+indent_style = space
+
+[*.md]
+max_line_length = 80
+tab_width = 4
+indent_style = space
