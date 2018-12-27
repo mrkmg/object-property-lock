@@ -1,8 +1,3 @@
-/**
- * Kevin Gravier <kevin@mrkmg.com>
- *
- * MIT License 2018
- */
 import { ILockFuncOptions } from "./opts";
 export declare function lock<T>(obj: T, opts?: ILockFuncOptions<T>): void;
 export declare function lock<T>(obj: T, silent?: boolean): void;

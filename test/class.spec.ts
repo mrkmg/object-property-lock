@@ -40,25 +40,15 @@ class LoudByProperties {
     Unlocked: string = "B";
 }
 
-describe("Class - Loud", () => {
-    it("should lock specified properties after constructors called", () => {
-        const a = new LoudSingleLock();
-        expect(() => a.Locked = "1").toThrow();
-        expect(() => a.Unlocked = "2").not.toThrow();
+@Lockable({all: true, silent: true})
+class OverrideProperty {
+    LockedByAll: string = "A";
 
-        expect(a.Locked).toBe("A");
-        expect(a.Unlocked).toBe("2");
-    });
+    @Locked({silent: false})
+    LockedByProp: string = "B";
+}
 
-    it("should lock all properties after constructors called", () => {
-        const a = new LoudAllLocked();
-        expect(() => a.Locked1 = "1").toThrow();
-        expect(() => a.Locked2 = "2").toThrow();
-
-        expect(a.Locked1).toBe("A");
-        expect(a.Locked2).toBe("B");
-    });
-
+describe("Class - Other", () => {
     it("should lock inheritance chain", () => {
         const a = new LoudExtendedLock();
         expect(() => a.Locked = "1").toThrow();
@@ -79,6 +69,35 @@ describe("Class - Loud", () => {
 
         expect(a.Locked).toBe("A");
         expect(a.Unlocked).toBe("2");
+    });
+
+    it("should allow property to override class", () => {
+        const a = new OverrideProperty();
+        expect(() => a.LockedByAll = "1").not.toThrow();
+        expect(() => a.LockedByProp = "2").toThrow();
+
+        expect(a.LockedByAll).toBe("A");
+        expect(a.LockedByProp).toBe("B");
+    });
+});
+
+describe("Class - Loud", () => {
+    it("should lock specified properties after constructors called", () => {
+        const a = new LoudSingleLock();
+        expect(() => a.Locked = "1").toThrow();
+        expect(() => a.Unlocked = "2").not.toThrow();
+
+        expect(a.Locked).toBe("A");
+        expect(a.Unlocked).toBe("2");
+    });
+
+    it("should lock all properties after constructors called", () => {
+        const a = new LoudAllLocked();
+        expect(() => a.Locked1 = "1").toThrow();
+        expect(() => a.Locked2 = "2").toThrow();
+
+        expect(a.Locked1).toBe("A");
+        expect(a.Locked2).toBe("B");
     });
 });
 

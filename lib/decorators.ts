@@ -6,27 +6,41 @@
 import {ILockableOptions, ILockedOptions} from "./opts";
 import {lock} from "./lock";
 
-export function Lockable<T extends any>(opts?: ILockableOptions<T>): ClassDecorator {
+const THROW_KEY = "___locked_throw";
+const SILENT_KEY = "___locked_silent";
+
+function getArrayFromTargetProp(prop: string, target: any): string[] {
+    return target.hasOwnProperty(prop) ? target[prop] : [];
+}
+
+function addRemArr<T>(target: T[], rem: T[], add: T[]): T[] {
+    return target
+        .splice(0)
+        .filter(v => rem.indexOf(v) === -1)
+        .concat(add.filter(v => target.indexOf(v) === -1));
+}
+
+export function Lockable<T extends any>(opts: ILockableOptions<T> = {}): ClassDecorator {
     // @ts-ignore
     return function(target: T) {
         return function() {
             // Original Constructor
             target.call(this, arguments);
 
-            if (opts && opts.all) {
-                lock(this, opts.silent);
-            } else {
-                if (target.prototype.hasOwnProperty("___locked_silent")) {
-                    lock(this, (target.prototype as any).___locked_silent, true);
-                }
+            const classDecoratorProps = opts.all ? Object.getOwnPropertyNames(this) : opts.properties ? opts.properties : [];
+            const initSilentProps = opts.silent ? classDecoratorProps : [];
+            const initThrowProps = !opts.silent ? classDecoratorProps : [];
+            const silentPropDecoratorProps = getArrayFromTargetProp(SILENT_KEY, target.prototype);
+            const throwPropDecoratorProps = getArrayFromTargetProp(THROW_KEY, target.prototype);
+            const silentLocks = addRemArr(initSilentProps, throwPropDecoratorProps, silentPropDecoratorProps);
+            const throwLocks = addRemArr(initThrowProps, silentPropDecoratorProps, throwPropDecoratorProps);
 
-                if (target.prototype.hasOwnProperty("___locked_throw")) {
-                    lock(this, (target.prototype as any).___locked_throw, false);
-                }
+            if (silentLocks.length) {
+                lock(this, {silent: true, properties: silentLocks});
+            }
 
-                if (opts && opts.properties) {
-                    lock(this, opts.properties, opts.silent);
-                }
+            if (throwLocks.length) {
+                lock(this, {silent: false, properties: throwLocks});
             }
 
             return this;
@@ -37,11 +51,11 @@ export function Lockable<T extends any>(opts?: ILockableOptions<T>): ClassDecora
 export function Locked(opts?: ILockedOptions): PropertyDecorator {
     return (target: any, propertyKey: string | symbol) => {
         if (opts && opts.silent) {
-            if (!target.hasOwnProperty("___locked_silent")) target.___locked_silent = [];
-            target.___locked_silent.push(propertyKey);
+            if (!target.hasOwnProperty(SILENT_KEY)) target[SILENT_KEY] = [];
+            target[SILENT_KEY].push(propertyKey);
         } else {
-            if (!target.hasOwnProperty("___locked_throw")) target.___locked_throw = [];
-            target.___locked_throw.push(propertyKey);
+            if (!target.hasOwnProperty(THROW_KEY)) target[THROW_KEY] = [];
+            target[THROW_KEY].push(propertyKey);
         }
     };
 }

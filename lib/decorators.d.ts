@@ -1,8 +1,3 @@
-/**
- * Kevin Gravier <kevin@mrkmg.com>
- *
- * MIT License 2018
- */
 import { ILockableOptions, ILockedOptions } from "./opts";
 export declare function Lockable<T extends any>(opts?: ILockableOptions<T>): ClassDecorator;
 export declare function Locked(opts?: ILockedOptions): PropertyDecorator;

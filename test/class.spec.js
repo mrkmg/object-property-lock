@@ -18,7 +18,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var __1 = require("..");
 var index_1 = require("../index");
-var LoudSingleLock = /** @class */ (function () {
+var LoudSingleLock = (function () {
     function LoudSingleLock() {
         this.Locked = "A";
         this.Unlocked = "B";
@@ -31,7 +31,7 @@ var LoudSingleLock = /** @class */ (function () {
     ], LoudSingleLock);
     return LoudSingleLock;
 }());
-var LoudAllLocked = /** @class */ (function () {
+var LoudAllLocked = (function () {
     function LoudAllLocked() {
         this.Locked1 = "A";
         this.Locked2 = "B";
@@ -41,7 +41,7 @@ var LoudAllLocked = /** @class */ (function () {
     ], LoudAllLocked);
     return LoudAllLocked;
 }());
-var SilentSingleLock = /** @class */ (function () {
+var SilentSingleLock = (function () {
     function SilentSingleLock() {
         this.Locked = "A";
         this.Unlocked = "B";
@@ -54,7 +54,7 @@ var SilentSingleLock = /** @class */ (function () {
     ], SilentSingleLock);
     return SilentSingleLock;
 }());
-var SilentAllLocked = /** @class */ (function () {
+var SilentAllLocked = (function () {
     function SilentAllLocked() {
         this.Locked1 = "A";
         this.Locked2 = "B";
@@ -64,7 +64,7 @@ var SilentAllLocked = /** @class */ (function () {
     ], SilentAllLocked);
     return SilentAllLocked;
 }());
-var LoudExtendedLock = /** @class */ (function (_super) {
+var LoudExtendedLock = (function (_super) {
     __extends(LoudExtendedLock, _super);
     function LoudExtendedLock() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -80,7 +80,7 @@ var LoudExtendedLock = /** @class */ (function (_super) {
     ], LoudExtendedLock);
     return LoudExtendedLock;
 }(LoudSingleLock));
-var LoudByProperties = /** @class */ (function () {
+var LoudByProperties = (function () {
     function LoudByProperties() {
         this.Locked = "A";
         this.Unlocked = "B";
@@ -90,21 +90,20 @@ var LoudByProperties = /** @class */ (function () {
     ], LoudByProperties);
     return LoudByProperties;
 }());
-describe("Class - Loud", function () {
-    it("should lock specified properties after constructors called", function () {
-        var a = new LoudSingleLock();
-        expect(function () { return a.Locked = "1"; }).toThrow();
-        expect(function () { return a.Unlocked = "2"; }).not.toThrow();
-        expect(a.Locked).toBe("A");
-        expect(a.Unlocked).toBe("2");
-    });
-    it("should lock all properties after constructors called", function () {
-        var a = new LoudAllLocked();
-        expect(function () { return a.Locked1 = "1"; }).toThrow();
-        expect(function () { return a.Locked2 = "2"; }).toThrow();
-        expect(a.Locked1).toBe("A");
-        expect(a.Locked2).toBe("B");
-    });
+var OverrideProperty = (function () {
+    function OverrideProperty() {
+        this.LockedByAll = "A";
+        this.LockedByProp = "B";
+    }
+    __decorate([
+        __1.Locked({ silent: false })
+    ], OverrideProperty.prototype, "LockedByProp", void 0);
+    OverrideProperty = __decorate([
+        index_1.Lockable({ all: true, silent: true })
+    ], OverrideProperty);
+    return OverrideProperty;
+}());
+describe("Class - Other", function () {
     it("should lock inheritance chain", function () {
         var a = new LoudExtendedLock();
         expect(function () { return a.Locked = "1"; }).toThrow();
@@ -122,6 +121,29 @@ describe("Class - Loud", function () {
         expect(function () { return a.Unlocked = "2"; }).not.toThrow();
         expect(a.Locked).toBe("A");
         expect(a.Unlocked).toBe("2");
+    });
+    it("should allow property to override class", function () {
+        var a = new OverrideProperty();
+        expect(function () { return a.LockedByAll = "1"; }).not.toThrow();
+        expect(function () { return a.LockedByProp = "2"; }).toThrow();
+        expect(a.LockedByAll).toBe("A");
+        expect(a.LockedByProp).toBe("B");
+    });
+});
+describe("Class - Loud", function () {
+    it("should lock specified properties after constructors called", function () {
+        var a = new LoudSingleLock();
+        expect(function () { return a.Locked = "1"; }).toThrow();
+        expect(function () { return a.Unlocked = "2"; }).not.toThrow();
+        expect(a.Locked).toBe("A");
+        expect(a.Unlocked).toBe("2");
+    });
+    it("should lock all properties after constructors called", function () {
+        var a = new LoudAllLocked();
+        expect(function () { return a.Locked1 = "1"; }).toThrow();
+        expect(function () { return a.Locked2 = "2"; }).toThrow();
+        expect(a.Locked1).toBe("A");
+        expect(a.Locked2).toBe("B");
     });
 });
 describe("Class - Silent", function () {

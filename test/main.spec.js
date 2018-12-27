@@ -1,9 +1,4 @@
 "use strict";
-/**
- * Kevin Gravier <kevin@mrkmg.com>
- *
- * MIT License 2018
- */
 Object.defineProperty(exports, "__esModule", { value: true });
 var __1 = require("../");
 function createTestObject() {
